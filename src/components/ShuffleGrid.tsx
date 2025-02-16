@@ -3,15 +3,17 @@ import React, { useState, useEffect } from "react";
 const ShuffleGrid: React.FC = () => {
   const generateShuffledNumbers = (): number[] => {
     return Array.from({ length: 25 }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
-  }; const getRandomStartNumber = (): number => Math.floor(Math.random() * 9) + 1;
+  };
+
+  const getRandomStartNumber = (): number => Math.floor(Math.random() * 9) + 1;
 
   const [shuffledNumbers, setShuffledNumbers] = useState<number[]>([]);
   const [gameOver, setGameOver] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
   const [successCount, setSuccessCount] = useState(0);
-  const [startNumber, setStartNumber] = useState(getRandomStartNumber());
-  const [currentNumber, setCurrentNumber] = useState(1);
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
+  const [startNumber, setStartNumber] = useState(getRandomStartNumber()); // Stores initial start number
+  const [currentNumber, setCurrentNumber] = useState(startNumber); // Controls current game progress
 
   useEffect(() => {
     setShuffledNumbers(generateShuffledNumbers());
@@ -35,7 +37,7 @@ const ShuffleGrid: React.FC = () => {
 
     if (num === currentNumber) {
       setSelectedNumbers((prev) => [...prev, num]);
-      setCurrentNumber((prev) => prev + 1);
+      setCurrentNumber((prev) => prev + 1); // Go to next sequential number
       setSuccessCount((prev) => prev + 1);
     } else {
       setGameOver(true);
@@ -43,11 +45,13 @@ const ShuffleGrid: React.FC = () => {
   };
 
   const handleReset = () => {
+    const newStartNumber = getRandomStartNumber();
     setShuffledNumbers(generateShuffledNumbers());
     setGameOver(false);
     setTimeLeft(30);
     setSuccessCount(0);
-    setCurrentNumber(1);
+    setStartNumber(newStartNumber);
+    setCurrentNumber(newStartNumber); // Reset to new random number
     setSelectedNumbers([]);
   };
 
@@ -57,7 +61,7 @@ const ShuffleGrid: React.FC = () => {
         <h2 className="text-2xl font-bold mb-4">Number Sequence Game</h2>
         <p className="mb-2 text-lg">
           Find numbers in sequence starting from:{" "}
-          <span className="font-bold">{currentNumber}</span>
+          <span className="font-bold">{startNumber}</span>
         </p>
         <p className="mb-4 text-lg font-semibold">Time Left: {timeLeft} seconds</p>
         <div className="grid grid-cols-5 gap-2 mb-4">
